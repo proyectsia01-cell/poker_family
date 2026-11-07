@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PokerFamily</title>
+<style>
+:root{--bg:#e8efea;--ink:#16302a;--felt:#0f5c4d;--felt2:#0b463b;--gold:#f4b942;--plum:#5a2a52;--card:#fffdf8;--red:#c0392b;--panel:#ffffff;--mut:#5b6f68;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1815;--ink:#e8f1ec;--panel:#18262b;--mut:#9db3aa;--felt:#0d4f42;--felt2:#093a31}}
+:root[data-theme="dark"]{--bg:#0e1815;--ink:#e8f1ec;--panel:#18262b;--mut:#9db3aa}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;line-height:1.45}
+h1,h2{font-family:Georgia,"Times New Roman",serif;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 16px;background:var(--plum);color:#fff;font-weight:700;min-height:44px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button.alt{background:transparent;color:var(--ink);border:2px solid var(--mut)}
+button.gold{background:var(--gold);color:#2b1c00}
+.logo{font-size:clamp(2.4rem,9vw,4rem);letter-spacing:-1px;text-align:center;margin:8px 0 0}
+.logo span{color:var(--plum)}@media (prefers-color-scheme:dark){.logo span{color:var(--gold)}}
+.sub{text-align:center;color:var(--mut);margin:4px 0 20px}
+.panel{background:var(--panel);border-radius:18px;padding:16px;margin-bottom:14px}
+.cnt{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin:10px 0}
+.cnt button{padding:10px 0;background:transparent;color:var(--ink);border:2px solid var(--mut)}
+.cnt button.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.names{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+input{font:inherit;padding:10px;border-radius:10px;border:2px solid var(--mut);background:var(--bg);color:var(--ink);width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.table{background:radial-gradient(ellipse at center,var(--felt) 0,var(--felt2) 100%);border:8px solid var(--plum);border-radius:120px/70px;padding:22px 16px;color:#fff;text-align:center;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+.pot{font-family:Georgia,serif;font-size:1.4rem;color:var(--gold)}
+.board{display:flex;gap:6px;justify-content:center;margin:10px 0}
+.c{width:clamp(44px,12vw,62px);aspect-ratio:5/7;background:var(--card);color:#1b1b1b;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:clamp(1rem,4.4vw,1.4rem);line-height:1.05;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.c.r{color:var(--red)}.c.back{background:repeating-linear-gradient(45deg,var(--plum) 0 6px,#7a3d70 6px 12px);border:3px solid var(--card)}.c.empty{background:rgba(255,255,255,.1);box-shadow:none;border:2px dashed rgba(255,255,255,.35)}
+.pls{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.pl{background:rgba(0,0,0,.28);border-radius:10px;padding:6px 10px;font-size:.85rem;min-width:88px}
+.pl small{display:block;opacity:.85}.pl.on{outline:3px solid var(--gold)}.pl.out{opacity:.4;text-decoration:line-through}
+.pl b{background:var(--gold);color:#2b1c00;border-radius:50%;padding:0 6px;margin-right:4px}
+.msg{min-height:1.4em;color:var(--mut);text-align:center;font-size:.9rem;margin:0 0 8px}
+.hand{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:8px 0}
+.hand .c{width:70px}
+.tip{background:var(--bg);border-left:5px solid var(--gold);padding:8px 12px;border-radius:8px;margin:8px 0;font-size:.92rem}
+.big{font-family:Georgia,serif;font-size:1.3rem;text-align:center;margin:4px 0}
+.reto{background:var(--plum);color:#fff;border-radius:14px;padding:12px 14px;margin:10px 0}
+dialog{border:0;border-radius:18px;max-width:560px;width:calc(100% - 24px);background:var(--panel);color:var(--ink);padding:18px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog li{margin:5px 0}
+.sh{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:.85rem;margin:6px 0}
+.tbar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden}.tbar i{display:block;height:100%;width:100%;background:var(--gold);transition:width 1s linear}
+select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--mut);background:var(--bg);color:var(--ink);margin-top:4px;width:100%}label{font-size:.9rem}
+</style></head><body>
+<div class="wrap">
+<section id="setup">
+<h1 class="logo">Poker<span>Family</span></h1>
+<p class="sub">Jueguen, aprendan y compartan en la mesa. Sin dinero, solo fichas de cariño.</p>
+<div class="panel"><b>Modo de juego</b><div class="row" style="margin-top:8px"><button id="m0" onclick="MODE='mesa';sc()">Familia en mesa</button><button id="m1" onclick="MODE='duel';sc()">Duelo vs IA</button><button id="m2" onclick="MODE='online';sc()">Online</button></div></div>
+<div class="panel"><b id="ql">¿Cuántas personas juegan?</b><span id="q9"> (1 a 9)</span>
+<div class="cnt" id="cnt"></div><div class="names" id="names"></div>
+<p id="note" class="sub" style="margin:8px 0 0"></p></div>
+<div class="panel row"><label>⏱ Tiempo por turno<select id="tsel"><option value="0">Sin límite</option><option value="15">15 s</option><option value="20" selected>20 s</option><option value="30">30 s</option><option value="60">60 s</option></select></label><label id="dl" hidden>🤖 Dificultad de la IA<select id="dsel"><option value="0">Fácil</option><option value="1" selected>Normal</option><option value="2">Difícil</option></select></label></div>
+<div class="panel" id="op" hidden><b>Mesa online</b><div class="row" style="margin-top:8px"><button class="gold" onclick="openRoom(1)">Crear mesa</button><input id="rc" placeholder="Código" maxlength="4" style="text-transform:uppercase" aria-label="Código de mesa"><button onclick="openRoom(0)">Unirme</button></div></div>
+<div class="row"><button class="gold" id="sb" onclick="start()">Empezar a jugar</button><button class="alt" onclick="G.showModal()">Cómo se juega</button></div>
+</section>
+<section id="game" hidden>
+<div class="top"><button class="alt" onclick="menu()">Menú</button><div class="pot" id="pot"></div><button class="alt" id="mu" onclick="music()" aria-label="Música">🎵</button><button class="alt" onclick="G.showModal()">Guía</button></div>
+<div class="table"><div id="ph" class="sh"></div><div class="board" id="board"></div><div class="pls" id="pls"></div></div>
+<p class="msg" id="msg"></p>
+<div class="panel" id="act"></div>
+</section>
+</div>
+<dialog id="G"><h2>Cómo se juega</h2>
+<p>Es póker Texas Hold’em adaptado. Cada quien recibe 2 cartas secretas y hay 5 cartas comunes en la mesa. Gana la mejor combinación de 5 cartas. Cada ronda se apuesta cuatro veces: antes del flop, flop (3 cartas), turn y river.</p>
+<p><b>Combinaciones, de menor a mayor:</b></p>
+<ol><li>Carta alta: ninguna combinación.</li><li>Pareja: dos cartas iguales.</li><li>Doble pareja: dos parejas.</li><li>Trío: tres iguales.</li><li>Escalera: cinco consecutivas.</li><li>Color: cinco del mismo palo.</li><li>Full: un trío y una pareja.</li><li>Póker: cuatro iguales.</li><li>Escalera de color: escalera del mismo palo.</li></ol>
+<p>Todos empiezan con 500 fichas. Quien se queda sin fichas recibe 100 más: aquí nadie queda fuera. El ganador de cada ronda recibe un reto familiar.</p>
+<button onclick="G.close()">Entendido</button></dialog>
+<script>
+const $=s=>document.querySelector(s),SU=['♠','♥','♦','♣'],RL={11:'J',12:'Q',13:'K',14:'A'},rl=r=>RL[r]||r;
+const HN=['Carta alta','Pareja','Doble pareja','Trío','Escalera','Color','Full','Póker','Escalera de color'];
+const TIPS=['Aún no tienes combinación. Si apuestan fuerte, retirarte es una jugada válida.','Una pareja es una buena base, pero no te confíes.','¡Mano sólida! Puedes animarte a subir.','Tres iguales: muy fuerte.','Cinco cartas consecutivas.','Cinco cartas del mismo palo.','Trío más pareja: casi imbatible.','¡Cuatro iguales! Poquísimas veces se ve.','La mano más rara del juego.'];
+const RETOS=['Cuenta una anécdota graciosa de tu infancia.','Di algo que admiras de la persona a tu izquierda.','Propón el plan familiar del próximo fin de semana.','Imita a un miembro de la familia y que los demás adivinen quién es.','Cuenta cuál ha sido tu mejor recuerdo en familia.','Enseña a los demás algo que sepas hacer muy bien.','Elige una canción y que todos la tarareen contigo.','Agradece algo concreto a alguien de la mesa.'];
+let MODE='mesa',TL=20,tl=0,tid=0,ac,mon=0,mfirst=1,mi=0,mtm,ON=0,host=0,hid='',me='',code='',db,rdoc,lob=[],dl=0,lastDl=0,P=[],N=3,H=1,dealer=-1,deck=[],board=[],pot=0,phase=0,cur=0,turn=0,acted=new Set(),view='',msg='',endInfo=null;
+const canAct=p=>!p.folded&&p.chips>0;
+function sc(){const D=MODE=='duel',O=MODE=='online';if(D||O)N=1;$('#op').hidden=!O;$('#sb').hidden=O;$('#m0').className=MODE=='mesa'?'':'alt';$('#m1').className=D?'':'alt';$('#m2').className=O?'':'alt';$('#cnt').style.display=D||O?'none':'';$('#q9').hidden=D||O;$('#ql').textContent=D||O?'Tu nombre':'¿Cuántas personas juegan?';$('#dl').hidden=!D;$('#cnt').innerHTML=[1,2,3,4,5,6,7,8,9].map(i=>`<button class="${i==N?'on':''}" onclick="N=${i};sc()" aria-label="${i} jugadores">${i}</button>`).join('');
+const old=[...document.querySelectorAll('#names input')].map(x=>x.value);
+$('#names').innerHTML=Array.from({length:N},(_,i)=>`<input value="${old[i]||'Jugador '+(i+1)}" maxlength="14" aria-label="Nombre ${i+1}">`).join('');
+$('#note').textContent=O?'Cada persona juega desde su propio dispositivo.':D?'Cara a cara contra una IA que calcula sus probabilidades.':N==1?'Jugarás contra 3 bots de la familia.':''}
+sc();
+function mk(){const d=[];for(let s=0;s<4;s++)for(let r=2;r<=14;r++)d.push({r,s});for(let i=d.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]]}return d}
+function sc5(c){const r=c.map(x=>x.r).sort((a,b)=>b-a),fl=c.every(x=>x.s==c[0].s),m={};r.forEach(x=>m[x]=(m[x]||0)+1);
+const g=Object.entries(m).map(([k,v])=>[v,+k]).sort((a,b)=>b[0]-a[0]||b[1]-a[1]),sh=g.map(x=>x[0]).join(''),u=g.length==5;
+let hi=r[0],st=u&&r[0]-r[4]==4;if(u&&r.join()=='14,5,4,3,2'){st=true;hi=5}
+const cat=st&&fl?8:sh=='41'?7:sh=='32'?6:fl?5:st?4:sh=='311'?3:sh=='221'?2:sh=='2111'?1:0;
+return[cat,...(st?[hi]:g.map(x=>x[1]))]}
+function cb(a,k,s=0,cu=[],o=[]){if(cu.length==k){o.push(cu.slice());return o}for(let i=s;i<a.length;i++){cu.push(a[i]);cb(a,k,i+1,cu,o);cu.pop()}return o}
+function cmp(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){const d=(a[i]||0)-(b[i]||0);if(d)return d}return 0}
+function best(c){return cb(c,5).map(sc5).reduce((a,b)=>cmp(a,b)>=0?a:b)}
+function nm(c){if(c.length<5)return c[0].r==c[1].r?'Pareja':'Carta alta';return HN[best(c)[0]]}
+function card(c){return`<div class="c ${c.s==1||c.s==2?'r':''}"><span>${rl(c.r)}</span><span>${SU[c.s]}</span></div>`}
+function start(){const v=[...document.querySelectorAll('#names input')].map((x,i)=>x.value.trim()||'Jugador '+(i+1));
+TL=+$('#tsel').value;P=v.map(n=>({name:n,bot:false,chips:500}));H=P.length;
+if(MODE=='duel')P.push({name:'IA Maestra',bot:true,ai:true,lv:+$('#dsel').value,chips:500});else if(H==1)['Abuela Bot','Tío Bot','Primo Bot'].forEach(n=>P.push({name:n,bot:true,chips:500}));
+dealer=-1;$('#setup').hidden=true;$('#game').hidden=false;if(mfirst){mfirst=0;music(1)}newRound()}
+function menu(){if(ON)return location.reload();clearInterval(tid);$('#game').hidden=true;$('#setup').hidden=false}
+function newRound(){dealer=(dealer+1)%P.length;deck=mk();board=[];pot=0;phase=0;endInfo=null;msg='Nueva ronda: cada quien pone 10 fichas.';
+P.forEach(p=>{if(p.chips<=0)p.chips=100;p.hand=[deck.pop(),deck.pop()];p.folded=false;const a=Math.min(10,p.chips);p.chips-=a;pot+=a});startBet()}
+function nxt(i){for(let j=1;j<=P.length;j++){const k=(i+j)%P.length,p=P[k];if(canAct(p)&&(!acted.has(k)||p.bet<cur))return k}return -1}
+function startBet(){cur=0;acted=new Set();P.forEach(p=>p.bet=0);turn=nxt(dealer);if(turn<0)return adv();setTurn()}
+function setTurn(){if(ON){dl=TL?Date.now()+TL*1000:0;return push()}view=P[turn].bot?'bot':H>1?'pass':'act';render();if(view=='act')tStart();if(view=='bot')setTimeout(botAct,1000)}
+function adv(){phase++;if(phase>3)return showdown();const n=phase==1?3:1;for(let i=0;i<n;i++)board.push(deck.pop());startBet()}
+function act(t,r=0){clearInterval(tid);const p=P[turn],need=cur-p.bet;let w;
+if(t=='fold'){p.folded=true;w='se retira'}else{const a=Math.min(need+(t=='raise'?r:0),p.chips);p.chips-=a;p.bet+=a;pot+=a;
+if(p.bet>cur){cur=p.bet;acted=new Set()}w=t=='raise'?`sube a ${p.bet}`:need>0?`iguala (${a})`:'pasa'}
+acted.add(turn);msg=`${p.name} ${w}.`;
+const al=P.filter(x=>!x.folded);if(al.length==1)return end([al[0]],'Todos se retiraron');
+const n=nxt(turn);if(n<0)return adv();turn=n;setTurn()}
+function botAct(){if(P[turn].ai)return aiAct();const p=P[turn],need=cur-p.bet,a=p.hand,
+s0=board.length?[.25,.6,.85,.9,.92,.95,.97,.98,1][best([...a,...board])[0]]:a[0].r==a[1].r?.8:Math.max(a[0].r,a[1].r)>11?.55:.3,s=s0+Math.random()*.25-.1;
+if(need>0&&s<.4)act('fold');else if(s>.8&&p.chips>need+20&&Math.random()<.6)act('raise',20);else act('call')}
+function eq(a,b,t){const u=new Set([...a,...b].map(c=>c.r*4+c.s));let w=0;for(let i=0;i<t;i++){const d=mk().filter(c=>!u.has(c.r*4+c.s)),bd=[...b,...d.slice(2,7-b.length)],x=cmp(best([...a,...bd]),best([d[0],d[1],...bd]));w+=x>0?1:x==0?.5:0}return w/t}
+function aiAct(){const p=P[turn],need=cur-p.bet,L=p.lv,e=eq(p.hand,board,[60,150,250][L])+(Math.random()-.5)*[.3,.14,.04][L],po=need/(pot+need||1);
+if(need>0&&e<po+[.12,.04,.02][L])act('fold');
+else if(e>.72&&p.chips>need+20&&Math.random()<[.4,.7,.9][L])act('raise',e>.88?50:20);
+else if(L==2&&need==0&&e<.3&&p.chips>20&&Math.random()<.12)act('raise',20);
+else act('call')}
+function tStart(){clearInterval(tid);if(!TL)return;tl=TL;tid=setInterval(()=>{tl--;const t=$('#tt'),b=$('#tb');if(t)t.textContent='⏱ '+tl+' s';if(b){b.style.width=tl/TL*100+'%';b.style.background=tl<=5?'var(--red)':'var(--gold)'}if(tl<=3&&tl>0)beep(880);if(tl<=0){clearInterval(tid);act(cur-P[turn].bet>0?'fold':'call')}},1000)}
+const ROOTS=[261.63,196,220,174.61],ARP=[0,1,2,3,2,1,2,1];
+function note(f,d,v){const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d)}
+function beep(f){if(ac&&mon)note(f,.12,.08)}
+function music(f){mon=f?1:!mon;$('#mu').textContent=mon?'🎵':'🔇';clearInterval(mtm);if(!mon)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume()}catch(e){mon=0;return}
+mtm=setInterval(()=>{const k=(mi/8|0)%4,r=ROOTS[k],th=k==2?3:4,ar=[0,th,7,12][ARP[mi%8]];note(r*2**((ar+12)/12),.4,.05);if(mi%8==0)note(r,1.6,.08);mi++},330)}
+function push(){rdoc.set(JSON.parse(JSON.stringify({go:1,h:hid,P,board,pot,phase,cur,turn,deck,dealer,msg,endInfo,TL,dl,acted:[...acted]})))}
+function unpack(o){P=o.P;board=o.board||[];pot=o.pot;phase=o.phase;cur=o.cur;turn=o.turn;deck=o.deck||[];dealer=o.dealer;msg=o.msg||'';endInfo=o.endInfo||null;TL=o.TL;dl=o.dl||0;acted=new Set(o.acted||[]);H=P.length}
+function goOn(){TL=+$('#tsel').value;P=lob.slice(0,9).map(x=>({name:x.name,uid:x.uid,bot:false,chips:500}));H=P.length;dealer=-1;newRound()}
+function tickOn(){if(!ON||!P.length||endInfo||!dl)return;const r=Math.max(0,Math.ceil((dl-Date.now())/1000)),t=$('#tt'),b=$('#tb');if(t)t.textContent='⏱ '+r+' s';if(b){b.style.width=r/TL*100+'%';b.style.background=r<=5?'var(--red)':'var(--gold)'}if(r<=3&&r>0&&P[turn].uid==me)beep(880);if(host&&r<=0&&lastDl!=dl){lastDl=dl;act(cur-P[turn].bet>0?'fold':'call')}}
+const REMOTE='wss://TU-SERVIDOR.onrender.com';
+const SERVER=/^https?:$/.test(location.protocol)&&(location.hostname!='localhost'||location.port)?(location.protocol=='https:'?'wss://':'ws://')+location.host:REMOTE;
+let ws;
+function myId(){try{return localStorage.pfid||(localStorage.pfid=Math.random().toString(36).slice(2,12))}catch(e){return Math.random().toString(36).slice(2,12)}}
+function openRoom(c){const nm0=($('#names input').value.trim()||'Jugador').slice(0,14);
+code=c?Math.random().toString(36).slice(2,6).toUpperCase():$('#rc').value.trim().toUpperCase();
+if(!code)return $('#note').textContent='Escribe el código de la mesa.';
+me=myId();$('#note').textContent='Conectando…';
+try{ws=new WebSocket(SERVER)}catch(e){return $('#note').textContent='No se pudo conectar al servidor.'}
+rdoc={set:o=>ws.readyState==1&&ws.send(JSON.stringify({t:'set',o}))};
+ws.onopen=()=>ws.send(JSON.stringify({t:'join',code,create:!!c,name:nm0,uid:me}));
+ws.onmessage=e=>{const m=JSON.parse(e.data);
+if(m.t=='err'){ws.close();return $('#note').textContent=m.msg}
+if(m.t=='ok'){ON=1;P=[];$('#setup').hidden=true;$('#game').hidden=false;if(mfirst){mfirst=0;music(1)}setInterval(tickOn,500)}
+if(m.t=='lob'){lob=m.lob;if(!P.length)render()}
+if(m.t=='st'){const o=m.o;hid=o.h;host=hid==me;if(o.go)unpack(o);render()}};
+ws.onerror=()=>{if(!ON)$('#note').textContent='No se pudo conectar al servidor.'};
+ws.onclose=()=>{if(ON)$('#msg').textContent='Conexión perdida. Recarga para volver a entrar con el mismo código.'}}
+function showdown(){const al=P.filter(p=>!p.folded);al.forEach(p=>{p.sc=best([...p.hand,...board]);p.bc=bc([...p.hand,...board])});
+const top=al.reduce((a,p)=>cmp(p.sc,a)>0?p.sc:a,al[0].sc),w=al.filter(p=>cmp(p.sc,top)==0);
+end(w,'Gana con '+HN[top[0]].toLowerCase(),al)}
+function end(w,why,show){const s=Math.floor(pot/w.length);w.forEach(x=>x.chips+=s);
+endInfo={w:w.map(x=>x.name).join(' y '),why,k:Math.random(),det:show?ex(w[0].sc):'',wc:show?w[0].bc:[],sp:show?w.map(x=>x.name).join(' y ')+' gana. '+ex(w[0].sc):w[0].name+' gana porque todos se retiraron.',show:show||[],reto:RETOS[Math.random()*RETOS.length|0],s,over:MODE=='duel'&&P.find(x=>x.chips<=0),wb:w.every(x=>x.bot)};view='end';ON?push():render()}
+function reveal(){view='act';render();tStart()}
+function render(){if(ON&&!P.length){$('#pot').textContent='Mesa '+code;$('#board').innerHTML='';$('#ph').innerHTML='';$('#msg').textContent='';$('#pls').innerHTML=lob.slice(0,9).map(x=>`<div class="pl">${x.name}${x.uid==me?' (tú)':''}</div>`).join('');$('#act').innerHTML=`<p class="big">Código de la mesa: <b>${code}</b></p><p class="tip">Que tu familia abra PokerFamily, elija “Online”, escriba este código y toque “Unirme”. Pueden entrar hasta 9 personas.</p>${host?`<button class="gold" style="width:100%" ${lob.length<2?'disabled':''} onclick="goOn()">Empezar con ${lob.length} jugadores</button>`:'<p class="msg">Esperando a que el anfitrión empiece…</p>'}`;return}if(ON)view=endInfo?'end':P[turn].uid==me?'act':'wait';$('#pot').textContent='Bote: '+pot+' 🪙';
+$('#ph').innerHTML=['Antes del flop','Flop','Turn','River'].map((n,i)=>`<span style="opacity:${i==Math.min(phase,3)?1:.45};font-weight:${i==Math.min(phase,3)?800:400}">${n}</span>`).join('');
+$('#board').innerHTML=Array.from({length:5},(_,i)=>board[i]?card(board[i]):'<div class="c empty"></div>').join('');
+$('#pls').innerHTML=P.map((p,i)=>`<div class="pl ${i==turn&&view!='end'?'on':''} ${p.folded?'out':''}">${i==dealer?'<b>D</b>':''}${p.name}<small>🪙 ${p.chips}${p.bet?' · puso '+p.bet:''}</small></div>`).join('');
+$('#msg').textContent=msg;const A=$('#act'),p=P[turn];
+if(view=='bot'||view=='wait'){const my=ON&&P.find(x=>x.uid==me);A.innerHTML=`<p class="big">${p.name} ${ON?'está en turno':'está pensando'}…</p>${ON&&TL?'<div class="tbar"><i id="tb"></i></div><p class="msg" id="tt"></p>':''}${my&&!my.folded?`<div class="hand">${my.hand.map(card).join('')}</div><p class="tip">Tus cartas · Tienes: <b>${nm([...my.hand,...board])}</b></p>`:''}`}
+else if(view=='pass')A.innerHTML=`<p class="big">Turno de ${p.name}</p><p class="tip">Pasa el dispositivo y que los demás no miren. Toca para ver tus cartas.</p><button class="gold" style="width:100%" onclick="reveal()">Ver mis cartas</button>`;
+else if(view=='act'){const need=cur-p.bet,all=[...p.hand,...board],n=all.length<5?(p.hand[0].r==p.hand[1].r?1:0):best(all)[0],tip=all.length<5?(p.hand[0].r==p.hand[1].r?'Pareja de salida: buen comienzo.':'Faltan cartas en la mesa: mira cómo evoluciona.'):TIPS[n];
+A.innerHTML=`${TL?`<div class="tbar"><i id="tb"></i></div><p class="msg" id="tt">⏱ ${TL} s</p>`:''}<div class="big">${H>1?p.name+', tus cartas':'Tus cartas'}</div><div class="hand">${p.hand.map(card).join('')}</div><p class="big" style="font-size:1.1rem">Tienes: <b>${nm(all)}</b></p><p class="tip">${tip}</p>
+<div class="row"><button onclick="act('call')">${need>0?'Igualar '+Math.min(need,p.chips):'Pasar'}</button>${p.chips>need?`<button class="gold" onclick="act('raise',20)">Subir +20</button>`:''}${p.chips>need+50?`<button class="gold" onclick="act('raise',50)">Subir +50</button>`:''}<button class="alt" onclick="act('fold')">Retirarse</button></div>`}
+else if(view=='end'){const e=endInfo;if(e.k!=sk){sk=e.k;say(e.sp)}A.innerHTML=`<p class="big">🎉 ${e.w}</p><p class="big" style="font-size:1rem">${e.why}. Se lleva ${e.s} fichas.</p>${e.det?`<div class="tip"><b>¿Por qué ganó ${e.w}?</b><br>${e.det}<div class="hand">${(e.wc||[]).map(card).join('')}</div>${e.w}, cuéntale a la mesa cómo formaste tu mano. <button class="alt" onclick="say(endInfo.sp)">🔊 Escuchar</button></div>`:`<div class="tip">${e.sp} Si quieres, cuéntanos qué mano tenías. <button class="alt" onclick="say(endInfo.sp)">🔊 Escuchar</button></div>`}${e.show.length?`<div>${e.show.map(x=>`<div class="hand" style="align-items:center">${x.hand.map(card).join('')}<span><b>${x.name}</b>: ${ex(x.sc)}</span></div>`).join('')}</div>`:''}${e.over?`<p class="big">${e.over.bot?'🏆 ¡Ganaste el duelo!':'🤖 La IA ganó el duelo'}</p>`:e.wb?'':`<div class="reto"><b>Reto familiar para ${e.w}:</b><br>${e.reto}</div>`}${ON&&!host?'<p class="msg">Esperando al anfitrión…</p>':`<button class="gold" style="width:100%" onclick="${e.over?'start()':'newRound()'}">${e.over?'Nuevo duelo':'Siguiente ronda'}</button>`}`}}
+</script></body></html>
